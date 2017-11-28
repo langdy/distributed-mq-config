@@ -1,0 +1,116 @@
+server:
+  port: 28868
+  
+  # 访问日志
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: /home/userhome/applogs/accesslog/${spring.application.name}
+      pattern: "%a %A %l %u %t \"%r\" %s %D"
+      
+  # 压缩,这个属性样板打开了压缩选项，这样稍后应用到JSON正文的压缩就有保证了。
+  compression:
+    enabled: true
+    mime-types: application/json
+
+# 日志
+logging:
+  config: classpath:log4j2-prod.xml
+  
+
+spring:
+  # AOP
+  aop:
+    proxy-target-class: true
+    auto: true
+    
+  # 数据库
+  datasource:
+    username: root
+    password: langdy
+    url: jdbc:mysql://localhost:3306/distributed-mq?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 文档 : https://github.com/alibaba/druid/tree/1.1.0/druid-spring-boot-starter
+    druid: 
+      # 连接池配置，说明请参考Druid Wiki，配置_DruidDataSource参考配置 -> https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_DruidDataSource%E5%8F%82%E8%80%83%E9%85%8D%E7%BD%AE
+      filters: stat # 配置监控统计拦截的filters,默认值为stat，配置多个请以英文逗号分隔，如stat,wall,log4j 
+      initialSize: 20
+      minIdle: 15
+      maxActive: 100
+      maxWait: 60000 # 配置获取连接等待超时的时间
+      timeBetweenEvictionRunsMillis: 60000 # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      minEvictableIdleTimeMillis: 300000 # 配置一个连接在池中最小生存的时间，单位是毫秒  
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true # 是否打开PSCache
+      maxPoolPreparedStatementPerConnectionSize: 20 # 指定每个连接上PSCache的大小
+
+
+# 分页 page helper
+pagehelper:
+    helperDialect: Mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+    
+    
+# mybatis 枚举处理器包位置
+mybatis:
+  type-handlers-package: com.yjl.distributed.mq.config.bean.handler
+    
+mybatis-plus:
+  mapper-locations: mybatis-mapper/*.xml
+  type-aliases-package: com.yjl.distributed.mq.config.bean.entity
+  global-config:
+    # 主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 1
+    # 字段策略 0:"忽略判断",1:"非 NULL 判断",2:"非空判断"
+    field-strategy: 2
+    # 驼峰下划线转换
+    db-column-underline: true
+    # 刷新mapper 调试神器
+    refresh-mapper: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+  
+# spring boot admin 监控 start
+management:
+  security:
+    enabled: false
+# spring boot admin 监控 end
+
+# spring cloud feign http
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+    
+hystrix:
+  metrics:
+    enabled: false
+
+
+# 防止第一次调用失败，设置超时时间为10秒
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 10000
+
+# mybatis plus 性能分析拦截器
+mybatisPlus.performanceInterceptorEnabled: false
+
+# 自定义配置
+distributed:
+  basic-bean:
+    enabled: true
+
+  # 注入攻击处理
+  filter:
+    injection-attack-interceptor:
+      enabled: true
+  feign-ok-http-config:
+    readTimeout: 60
+    connectTimeout: 60
+    writeTimeout: 180
+    

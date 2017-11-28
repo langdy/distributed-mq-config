@@ -1,0 +1,7 @@
+spring:
+  # 多环境配置文件
+  profiles:
+    active: dev
+  # 微服务名称
+  application:
+    name: distributed-mq-config-server
