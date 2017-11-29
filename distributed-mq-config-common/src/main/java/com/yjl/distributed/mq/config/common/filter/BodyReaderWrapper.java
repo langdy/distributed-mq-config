@@ -1,9 +1,7 @@
 package com.yjl.distributed.mq.config.common.filter;
 
 import org.springframework.util.StreamUtils;
-
 import com.yjl.distributed.mq.config.common.util.RequestUtils;
-
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -22,49 +20,49 @@ import java.io.InputStreamReader;
  */
 public class BodyReaderWrapper extends HttpServletRequestWrapper {
 
-	private final byte[] body;
+    private final byte[] body;
 
-	public BodyReaderWrapper(HttpServletRequest request) throws IOException {
-		super(request);
-		if (RequestUtils.isApplicationJsonHeader(request)) {
-			body = StreamUtils.copyToByteArray(request.getInputStream());
-		} else {
-			body = null;
-		}
-	}
+    public BodyReaderWrapper(HttpServletRequest request) throws IOException {
+        super(request);
+        if (RequestUtils.isApplicationJsonHeader(request)) {
+            body = StreamUtils.copyToByteArray(request.getInputStream());
+        } else {
+            body = null;
+        }
+    }
 
-	@Override
-	public BufferedReader getReader() throws IOException {
-		return new BufferedReader(new InputStreamReader(this.getInputStream()));
-	}
+    @Override
+    public BufferedReader getReader() throws IOException {
+        return new BufferedReader(new InputStreamReader(this.getInputStream()));
+    }
 
-	@Override
-	public ServletInputStream getInputStream() throws IOException {
-		if (null == body) {
-			return super.getInputStream();
-		}
-		final ByteArrayInputStream inputStream = new ByteArrayInputStream(body);
-		return new ServletInputStream() {
-			@Override
-			public boolean isFinished() {
-				return false;
-			}
+    @Override
+    public ServletInputStream getInputStream() throws IOException {
+        if (null == body) {
+            return super.getInputStream();
+        }
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(body);
+        return new ServletInputStream() {
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
 
-			@Override
-			public boolean isReady() {
-				return false;
-			}
+            @Override
+            public boolean isReady() {
+                return false;
+            }
 
-			@Override
-			public void setReadListener(ReadListener readListener) {
+            @Override
+            public void setReadListener(ReadListener readListener) {
 
-			}
+            }
 
-			@Override
-			public int read() throws IOException {
-				return inputStream.read();
-			}
-		};
-	}
+            @Override
+            public int read() throws IOException {
+                return inputStream.read();
+            }
+        };
+    }
 
 }

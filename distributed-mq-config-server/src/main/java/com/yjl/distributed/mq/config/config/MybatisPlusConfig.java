@@ -14,14 +14,14 @@ import org.springframework.context.annotation.Configuration;
 @MapperScan({"com.yjl.distributed.mq.config.dal.mapper"})
 public class MybatisPlusConfig {
 
-	/**
-	 * mybatis-plus 性能分析拦截器<br>
-	 * 文档：http://mp.baomidou.com<br>
-	 */
-	@Bean
-	@ConditionalOnExpression("${mybatisPlus.performanceInterceptorEnabled:false}")
-	public PerformanceInterceptor performanceInterceptor() {
-		return new PerformanceInterceptor();
-	}
+    /**
+     * mybatis-plus 性能分析拦截器<br>
+     * 文档：http://mp.baomidou.com<br>
+     */
+    @Bean
+    @ConditionalOnExpression("${mybatisPlus.performanceInterceptorEnabled:false}")
+    public PerformanceInterceptor performanceInterceptor() {
+        return new PerformanceInterceptor();
+    }
 
 }

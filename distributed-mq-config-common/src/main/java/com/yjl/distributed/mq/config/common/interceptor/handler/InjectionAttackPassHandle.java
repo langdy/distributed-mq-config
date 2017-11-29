@@ -13,82 +13,83 @@ import java.io.IOException;
 public class InjectionAttackPassHandle implements InjectionAttackHandler {
 
 
-	private InjectionAttackPassHandle() {}
+    private InjectionAttackPassHandle() {}
 
-	public static InjectionAttackPassHandle getInstance() {
-		return SingletonDefaultInjectionAttackHandler.INSTANCE;
-	}
+    public static InjectionAttackPassHandle getInstance() {
+        return SingletonDefaultInjectionAttackHandler.INSTANCE;
+    }
 
-	@Override
-	public boolean isInjectionAttack(String rawCharacters) {
-		return this.isSqlInjectionAttack(rawCharacters) || this.isXSSInjectionAttack(rawCharacters)
-				|| this.isSpecialCharactersInjectionAttack(rawCharacters);
-	}
+    @Override
+    public boolean isInjectionAttack(String rawCharacters) {
+        return this.isSqlInjectionAttack(rawCharacters) || this.isXSSInjectionAttack(rawCharacters)
+                || this.isSpecialCharactersInjectionAttack(rawCharacters);
+    }
 
-	@Override
-	public boolean isInjectionAttack(String parameters, String[] ignoreStrings) {
-		return false;
-	}
+    @Override
+    public boolean isInjectionAttack(String parameters, String[] ignoreStrings) {
+        return false;
+    }
 
-	@Override
-	public boolean isSqlInjectionAttack(String rawCharacters) {
-		return false;
-	}
+    @Override
+    public boolean isSqlInjectionAttack(String rawCharacters) {
+        return false;
+    }
 
-	@Override
-	public boolean isSqlInjectionAttack(String rawCharacters, String[] ignoreStrings) {
-		return false;
-	}
+    @Override
+    public boolean isSqlInjectionAttack(String rawCharacters, String[] ignoreStrings) {
+        return false;
+    }
 
-	@Override
-	public boolean isXSSInjectionAttack(String rawCharacters) {
-		return false;
-	}
+    @Override
+    public boolean isXSSInjectionAttack(String rawCharacters) {
+        return false;
+    }
 
-	@Override
-	public boolean isXSSInjectionAttack(String rawCharacters, String[] ignoreStrings) {
-		return false;
-	}
+    @Override
+    public boolean isXSSInjectionAttack(String rawCharacters, String[] ignoreStrings) {
+        return false;
+    }
 
-	@Override
-	public boolean isSpecialCharactersInjectionAttack(String rawCharacters) {
-		return false;
-	}
+    @Override
+    public boolean isSpecialCharactersInjectionAttack(String rawCharacters) {
+        return false;
+    }
 
-	@Override
-	public boolean isSpecialCharactersInjectionAttack(String rawCharacters, String[] ignoreStrings) {
-		return false;
-	}
+    @Override
+    public boolean isSpecialCharactersInjectionAttack(String rawCharacters,
+            String[] ignoreStrings) {
+        return false;
+    }
 
-	@Override
-	public String filter(String rawCharacters) {
-		return rawCharacters;
-	}
+    @Override
+    public String filter(String rawCharacters) {
+        return rawCharacters;
+    }
 
-	@Override
-	public String filterSqlInjection(String rawCharacters) {
-		return rawCharacters;
-	}
+    @Override
+    public String filterSqlInjection(String rawCharacters) {
+        return rawCharacters;
+    }
 
-	@Override
-	public String filterXSSInjection(String rawCharacters) {
-		return rawCharacters;
-	}
+    @Override
+    public String filterXSSInjection(String rawCharacters) {
+        return rawCharacters;
+    }
 
-	@Override
-	public String filterSpecialCharacters(String rawCharacters) {
-		return rawCharacters;
-	}
+    @Override
+    public String filterSpecialCharacters(String rawCharacters) {
+        return rawCharacters;
+    }
 
-	@Override
-	public void attackHandle(HttpServletRequest request, HttpServletResponse response, String parameters)
-			throws IOException {
-		return;
-	}
+    @Override
+    public void attackHandle(HttpServletRequest request, HttpServletResponse response,
+            String parameters) throws IOException {
+        return;
+    }
 
-	private static class SingletonDefaultInjectionAttackHandler {
-		private static final InjectionAttackPassHandle INSTANCE = new InjectionAttackPassHandle();
-	}
+    private static class SingletonDefaultInjectionAttackHandler {
+        private static final InjectionAttackPassHandle INSTANCE = new InjectionAttackPassHandle();
+    }
 
 
 }

@@ -5,7 +5,7 @@ import com.yjl.distributed.mq.config.bean.entity.ConnectionConfigEntity;
 
 /**
  * <p>
-  * 连接配置表 Mapper 接口
+ * 连接配置表 Mapper 接口
  * </p>
  *
  * @author zhaoyc@1109

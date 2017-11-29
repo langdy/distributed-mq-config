@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class StartupRunner implements CommandLineRunner {
 
-	@Override
-	public void run(String... arg0) throws Exception {
-		LogManager.getLogger().info(">>>>>>>>>>>>>>>mq-config服务启动完成<<<<<<<<<<<<<");
-	}
+    @Override
+    public void run(String... arg0) throws Exception {
+        LogManager.getLogger().info(">>>>>>>>>>>>>>>mq-config服务启动完成<<<<<<<<<<<<<");
+    }
 
 }

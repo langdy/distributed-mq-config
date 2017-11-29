@@ -2,7 +2,6 @@ package com.yjl.distributed.mq.config.common.filter;
 
 
 import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -20,37 +19,38 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CorsHeaderFilter implements Filter {
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		// 解决跨域问题
-		httpResponse.setHeader("Access-Control-Max-Age", "3600");
-		httpResponse.setHeader("Access-Control-Allow-Headers",
-				"Origin, X-Requested-With, Content-Type, Accept, token, apitoken"); // 允许的请求头，加上自定义header配置
-		httpResponse.setHeader("Access-Control-Allow-Origin", "*");// 允许的域名
-		httpResponse.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE");
+        // 解决跨域问题
+        httpResponse.setHeader("Access-Control-Max-Age", "3600");
+        httpResponse.setHeader("Access-Control-Allow-Headers",
+                "Origin, X-Requested-With, Content-Type, Accept, token, apitoken"); // 允许的请求头，加上自定义header配置
+        httpResponse.setHeader("Access-Control-Allow-Origin", "*");// 允许的域名
+        httpResponse.setHeader("Access-Control-Allow-Methods",
+                "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE");
 
-		// 对options预请求进行返回设置，解决自定义header问题
-		if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
-			httpResponse.setCharacterEncoding("UTF-8");
-			httpResponse.setContentType("application/json; charset=utf-8");
-			httpResponse.setStatus(HttpServletResponse.SC_ACCEPTED);
+        // 对options预请求进行返回设置，解决自定义header问题
+        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
+            httpResponse.setCharacterEncoding("UTF-8");
+            httpResponse.setContentType("application/json; charset=utf-8");
+            httpResponse.setStatus(HttpServletResponse.SC_ACCEPTED);
 
-			return;
-		}
+            return;
+        }
 
-		chain.doFilter(request, response);
-	}
+        chain.doFilter(request, response);
+    }
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {}
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
-	@Override
-	public void destroy() {}
+    @Override
+    public void destroy() {}
 
 
 }

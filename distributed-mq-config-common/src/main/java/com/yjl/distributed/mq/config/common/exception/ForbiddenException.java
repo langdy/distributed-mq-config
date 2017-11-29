@@ -8,29 +8,29 @@ package com.yjl.distributed.mq.config.common.exception;
  */
 public class ForbiddenException extends RuntimeException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3902401000445776342L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3902401000445776342L;
 
-	public ForbiddenException() {
-		super();
-	}
+    public ForbiddenException() {
+        super();
+    }
 
-	public ForbiddenException(String message) {
-		super(message);
-	}
+    public ForbiddenException(String message) {
+        super(message);
+    }
 
-	public ForbiddenException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public ForbiddenException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ForbiddenException(Throwable cause) {
-		super(cause);
-	}
+    public ForbiddenException(Throwable cause) {
+        super(cause);
+    }
 
-	protected ForbiddenException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    protected ForbiddenException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ExportFiledComment {
 
-	/**
-	 * 字段释义
-	 */
-	String value() default "";
+    /**
+     * 字段释义
+     */
+    String value() default "";
 }

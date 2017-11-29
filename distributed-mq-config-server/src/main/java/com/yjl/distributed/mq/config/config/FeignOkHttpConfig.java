@@ -12,7 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.netflix.feign.FeignAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,22 +42,23 @@ import java.util.concurrent.TimeUnit;
 @ConfigurationProperties(prefix = "distributed.feign-ok-http-config")
 public class FeignOkHttpConfig {
 
-	/** 设置新连接的默认读取超时,值0表示没有超时,单位秒 **/
-	private int readTimeout = 60;
-	/** 连接超时时间,值0表示没有超时,单位秒 **/
-	private int connectTimeout = 60;
-	/** 设置新连接的默认写入超时,值0表示没有超时,单位秒 **/
-	private int writeTimeout = 180;
+    /** 设置新连接的默认读取超时,值0表示没有超时,单位秒 **/
+    private int readTimeout = 60;
+    /** 连接超时时间,值0表示没有超时,单位秒 **/
+    private int connectTimeout = 60;
+    /** 设置新连接的默认写入超时,值0表示没有超时,单位秒 **/
+    private int writeTimeout = 180;
 
-	@Bean
-	public okhttp3.OkHttpClient okHttpClient() {
-		return new okhttp3.OkHttpClient.Builder().readTimeout(readTimeout, TimeUnit.SECONDS)
-				.connectTimeout(connectTimeout, TimeUnit.SECONDS).writeTimeout(writeTimeout, TimeUnit.SECONDS)
-				.connectionPool(new ConnectionPool()).build();
-	}
+    @Bean
+    public okhttp3.OkHttpClient okHttpClient() {
+        return new okhttp3.OkHttpClient.Builder().readTimeout(readTimeout, TimeUnit.SECONDS)
+                .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS).connectionPool(new ConnectionPool())
+                .build();
+    }
 
-	@Bean
-	public Request.Options feignOptions() {
-		return new Request.Options(connectTimeout * 1000, readTimeout * 1000);
-	}
+    @Bean
+    public Request.Options feignOptions() {
+        return new Request.Options(connectTimeout * 1000, readTimeout * 1000);
+    }
 }

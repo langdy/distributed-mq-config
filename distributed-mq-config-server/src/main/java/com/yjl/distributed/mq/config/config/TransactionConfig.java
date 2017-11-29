@@ -6,5 +6,5 @@ import org.springframework.context.annotation.ImportResource;
 @Configuration
 @ImportResource("classpath:applicationContext-tx.xml")
 public class TransactionConfig {
-	// 声明式事务
+    // 声明式事务
 }

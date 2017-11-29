@@ -1,7 +1,6 @@
 package com.yjl.distributed.mq.config.common.annotation;
 
 import org.springframework.core.annotation.AliasFor;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -40,14 +39,14 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface PassInjectionAttackIntercept {
 
-	/**
-	 * 忽略的字符
-	 */
-	@AliasFor("ignoreStrings")
-	String[] value() default {};
+    /**
+     * 忽略的字符
+     */
+    @AliasFor("ignoreStrings")
+    String[] value() default {};
 
-	@AliasFor("value")
-	String[] ignoreStrings() default {};
+    @AliasFor("value")
+    String[] ignoreStrings() default {};
 
 
 }
