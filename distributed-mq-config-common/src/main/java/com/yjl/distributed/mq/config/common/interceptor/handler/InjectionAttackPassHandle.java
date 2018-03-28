@@ -1,8 +1,8 @@
 package com.yjl.distributed.mq.config.common.interceptor.handler;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 对于注入攻击不做任何处理

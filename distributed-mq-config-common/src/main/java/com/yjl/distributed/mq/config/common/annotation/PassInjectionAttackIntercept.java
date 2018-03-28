@@ -1,10 +1,10 @@
 package com.yjl.distributed.mq.config.common.annotation;
 
-import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.springframework.core.annotation.AliasFor;
 
 /**
  * 不需要防注入攻击拦截注解

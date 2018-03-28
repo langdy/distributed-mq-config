@@ -1,11 +1,11 @@
 package com.yjl.distributed.mq.config.common.cron;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-import org.springframework.scheduling.support.CronSequenceGenerator;
-import java.io.Serializable;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 import static org.apache.commons.lang3.StringUtils.split;
+import java.io.Serializable;
+import org.springframework.scheduling.support.CronSequenceGenerator;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author : zhaoyc

@@ -4,7 +4,6 @@
  */
 package com.yjl.distributed.mq.config.common.util;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import java.lang.management.ManagementFactory;
 import java.net.NetworkInterface;
 import java.nio.BufferUnderflowException;
@@ -14,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
 import java.util.concurrent.atomic.LongAdder;
+import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * 分布式code构建工具

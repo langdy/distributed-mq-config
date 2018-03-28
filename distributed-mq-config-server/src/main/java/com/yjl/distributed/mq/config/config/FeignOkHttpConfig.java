@@ -1,18 +1,18 @@
 package com.yjl.distributed.mq.config.config;
 
-import feign.Feign;
-import feign.Request;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import okhttp3.ConnectionPool;
+import java.util.concurrent.TimeUnit;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.netflix.feign.FeignAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import java.util.concurrent.TimeUnit;
+import feign.Feign;
+import feign.Request;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import okhttp3.ConnectionPool;
 
 /**
  * application.yml 示例 :

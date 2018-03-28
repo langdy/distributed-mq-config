@@ -1,7 +1,7 @@
 package com.yjl.distributed.mq.config.common.util;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import java.math.BigDecimal;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * @author : zhaoyc

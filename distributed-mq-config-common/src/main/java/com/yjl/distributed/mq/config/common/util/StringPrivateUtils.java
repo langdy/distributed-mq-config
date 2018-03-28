@@ -1,12 +1,18 @@
 package com.yjl.distributed.mq.config.common.util;
 
-import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
+import static java.lang.Character.isDigit;
+import static java.lang.Character.isLetter;
+import static java.lang.Character.isLetterOrDigit;
+import static java.lang.Character.isLowerCase;
+import static java.lang.Character.isUpperCase;
+import static java.lang.Character.isWhitespace;
+import static java.lang.Character.toLowerCase;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static java.lang.Character.*;
+import org.apache.commons.lang3.CharUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
