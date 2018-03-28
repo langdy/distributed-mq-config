@@ -5,9 +5,9 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 /**
  * Spring 事务管理工具类
- *
- * @author : zhaoyc
- * @date : 2016/12/23
+ * 
+ * @author zhaoyc
+ * @version 创建时间：2017年11月27日 上午11:07:38
  */
 public class TransactionUtils {
 

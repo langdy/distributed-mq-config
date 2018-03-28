@@ -33,34 +33,31 @@ public class DefaultInjectionAttackHandler implements InjectionAttackHandler {
     private static final String XSS_INJECTION =
             "((%22%20)|(%22\\s)|('%22)|(%22\\+))\\w.*|(\\s|%20)" + EVENTS + ".*|(%3D)|(%7C)";
     public static final String XSS_REGEX = XSS_HTML_TAG + "|" + XSS_INJECTION;
-    ///////////////////////////////////////////////////////////////////////////
-    // SQL注入正则
-    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * SQL注入正则
+     */
     private static final String SQL_INJECTION_2 = "('.+--)|(--)|(\\|)|(%7C)";
     private static final String SQL_INJECTION_1 =
             "(?:')|(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(?i)(\\b(and|exec|count|chr|mid|master|or|truncate|char|declare|join|insert|select|delete|update|create|drop)\\b)";
     public static final String SQL_INJECTION_REGEX = SQL_INJECTION_1 + "|" + SQL_INJECTION_2;
-    ///////////////////////////////////////////////////////////////////////////
-    // 特殊字符正则
-    ///////////////////////////////////////////////////////////////////////////
+
+    /** 特殊字符正则 */
     private static final String SPECIAL_CHARACTERS_2 = "(0x0d)|(0x0a)";
     private static final String SPECIAL_CHARACTERS_1 =
-            "(<)|(>)|(/\\*)|(\\*/)|(\\|)|(;)|(\\$)|(\\B\"\\B)|(\')|(\\\\\")|(\\(\\))|(\\B\\+\\B)"; // |(,)
+            "(<)|(>)|(/\\*)|(\\*/)|(\\|)|(;)|(\\$)|(\\B\\\\\"\\B)|(\')|(\\\\\")|(\\(\\))|(\\B\\+\\B)";
     public static final String SPECIAL_CHARACTERS_REGEX =
             SPECIAL_CHARACTERS_1 + "|" + SPECIAL_CHARACTERS_2;
-    ///////////////////////////////////////////////////////////////////////////
-    // SQL注入
-    ///////////////////////////////////////////////////////////////////////////
+
+    /** SQL注入 */
     private static final Pattern SQL_INJECTION_REGEX_PATTERN =
             Pattern.compile(SQL_INJECTION_REGEX, Pattern.CASE_INSENSITIVE);
-    ///////////////////////////////////////////////////////////////////////////
-    // XSS
-    ///////////////////////////////////////////////////////////////////////////
+
+    /** XSS */
     private static final Pattern XSS_REGEX_PATTERN =
             Pattern.compile(XSS_REGEX, Pattern.CASE_INSENSITIVE);
-    ///////////////////////////////////////////////////////////////////////////
-    // 特殊字符
-    ///////////////////////////////////////////////////////////////////////////
+
+    /** 特殊字符 */
     private static final Pattern SPECIAL_CHARACTERS_REGEX_PATTERN =
             Pattern.compile(SPECIAL_CHARACTERS_REGEX, Pattern.CASE_INSENSITIVE);
 
@@ -77,11 +74,27 @@ public class DefaultInjectionAttackHandler implements InjectionAttackHandler {
 
     @Override
     public boolean isInjectionAttack(String rawCharacters, String[] ignoreStrings) {
+
+        // sql注入检查
         final boolean sqlInjectionAttack = this.isSqlInjectionAttack(rawCharacters, ignoreStrings);
+        if (sqlInjectionAttack) {
+            return true;
+        }
+
+        // xss注入检查
         final boolean xssInjectionAttack = this.isXSSInjectionAttack(rawCharacters, ignoreStrings);
+        if (xssInjectionAttack) {
+            return true;
+        }
+
+        // 特殊字符检查
         final boolean specialCharactersInjectionAttack =
                 this.isSpecialCharactersInjectionAttack(rawCharacters, ignoreStrings);
-        return sqlInjectionAttack || xssInjectionAttack || specialCharactersInjectionAttack;
+        if (specialCharactersInjectionAttack) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.yjl.distributed.mq.config.common;
 
 import java.util.LinkedHashMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yjl.distributed.mq.config.common.util.JsonUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ResponseEntity<T> {
     /** 通配符 **/
-    public static final String WILDCARD_ALL = "*";
+    private static final String WILDCARD_ALL = "*";
     /** 响应状态码 **/
     private volatile String statusCode = StatusCode.BAD_REQUEST.getStatusCode();
     /** 响应状态码对应的提示信息 **/
@@ -34,108 +35,194 @@ public class ResponseEntity<T> {
     @JsonIgnore
     private volatile LinkedHashMap<String, String> exportTitleMap;
 
+    /**
+     * 
+     */
     public ResponseEntity() {}
 
-    public ResponseEntity(final String statusCode) {
-        this(statusCode, null, null);
-    }
-
-    public ResponseEntity(final String statusCode, final String statusMessage) {
+    /**
+     * 
+     * @param statusCode
+     * @param statusMessage
+     */
+    private ResponseEntity(final String statusCode, final String statusMessage) {
         this(statusCode, statusMessage, null);
     }
 
-    public ResponseEntity(final String statusCode, final String statusMessage,
+    /**
+     * 
+     * @param statusCode
+     * @param statusMessage
+     * @param responseContent
+     */
+    private ResponseEntity(final String statusCode, final String statusMessage,
             final T responseContent) {
         this.statusCode = statusCode;
         this.statusMessage = statusMessage;
         this.responseContent = responseContent;
     }
 
-    public ResponseEntity<T> empty() {
-        return new ResponseEntity<T>();
+    /**
+     * 请求成功，状态码为20000
+     * 
+     * @return
+     */
+    public ResponseEntity<T> ok() {
+        return ok(StatusCode.OK.getStatusCode(), StatusCode.OK.getStatusMessage());
+    }
+
+    /**
+     * 请求成功，状态码为20000
+     * 
+     * @param message 提示消息
+     * @return
+     */
+    public ResponseEntity<T> ok(final String message) {
+        return ok(StatusCode.OK.getStatusCode(), message);
     }
 
     /**
      * 成功请求,成功状态码自行指定
      *
-     * @param ok
-     * @param message
+     * @param okStatusCode 成功状态码
+     * @param message 提示消息
      * @return
      */
-    public ResponseEntity<T> ok(final StatusCode ok, final String message) {
-        return new ResponseEntity<T>(ok.getStatusCode(), message);
+    public ResponseEntity<T> ok(final String okStatusCode, final String message) {
+        return new ResponseEntity<T>(okStatusCode, message);
     }
 
     /**
-     * 失败请求,失败状态码自行指定
+     * 成功请求,成功状态码自行指定
      *
-     * @param fail
-     * @param message
+     * @param okStatusCode 成功状态码
+     * @param message 提示消息
      * @return
      */
-    public ResponseEntity<T> badRequest(final StatusCode fail, final String message) {
-        return new ResponseEntity<T>(fail.getStatusCode(), message);
+    public ResponseEntity<T> ok(final StatusCode okStatusCode, final String message) {
+        return new ResponseEntity<T>(okStatusCode.getStatusCode(), message);
     }
 
-    public ResponseEntity<T> ok() {
-        return ok(StatusCode.OK.getStatusCode(), StatusCode.OK.getStatusMessage());
+    /**
+     * 服务器发生错误，用户将无法判断发出的请求是否成功，状态码：20500
+     * 
+     * @param message 提示消息
+     * @return
+     */
+    public ResponseEntity<T> systemError(final String message) {
+        return new ResponseEntity<T>(StatusCode.SYSTEM_ERROR.getStatusCode(), message);
     }
 
-    public ResponseEntity<T> ok(final String message) {
-        return ok(StatusCode.OK.getStatusCode(), message);
+    /**
+     * 服务器发生错误，用户将无法判断发出的请求是否成功
+     * 
+     * @param errorStatusCode 错误状态码
+     * @param message 提示消息
+     * @return
+     */
+    public ResponseEntity<T> systemError(final StatusCode errorStatusCode, final String message) {
+        return new ResponseEntity<T>(errorStatusCode.getStatusCode(), message);
     }
 
-    public ResponseEntity<T> ok(final String ok, final String message) {
-        return new ResponseEntity<T>(ok, message);
-    }
-
-    public ResponseEntity<T> internalServerError(final String message) {
-        return new ResponseEntity<T>(StatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), message);
-    }
-
-    public ResponseEntity<T> internalServerError(final StatusCode error, final String message) {
-        return new ResponseEntity<T>(error.getStatusCode(), message);
-    }
-
-
+    /**
+     * 失败请求，状态码：20400
+     *
+     * @return
+     */
     public ResponseEntity<T> badRequest() {
         return badRequest(StatusCode.BAD_REQUEST.getStatusCode(),
                 StatusCode.BAD_REQUEST.getStatusMessage());
     }
 
+    /**
+     * 失败请求，状态码：20400
+     *
+     * @param message 提示消息
+     * @return
+     */
     public ResponseEntity<T> badRequest(final String message) {
         return badRequest(StatusCode.BAD_REQUEST.getStatusCode(), message);
     }
 
-    public ResponseEntity<T> badRequest(final String fail, final String message) {
-        return new ResponseEntity<T>(fail, message);
+    /**
+     * 失败请求,失败状态码自行指定
+     *
+     * @param failStatusCode 失败状态码
+     * @param message 提示消息
+     * @return
+     */
+    public ResponseEntity<T> badRequest(final String failStatusCode, final String message) {
+        return new ResponseEntity<T>(failStatusCode, message);
     }
 
+    /**
+     * 失败请求,失败状态码自行指定
+     *
+     * @param failStatusCode 失败状态码
+     * @param message 提示消息
+     * @return
+     */
+    public ResponseEntity<T> badRequest(final StatusCode failStatusCode, final String message) {
+        return new ResponseEntity<T>(failStatusCode.getStatusCode(), message);
+    }
 
+    /**
+     * 表示用户得到授权，但权限不足，状态码：20403
+     * 
+     * @return
+     */
     public ResponseEntity<T> forbidden() {
         return forbidden(StatusCode.FORBIDDEN.getStatusMessage());
     }
 
+    /**
+     * 表示用户得到授权，但权限不足，状态码：20403
+     * 
+     * @param message 提示消息
+     * @return
+     */
     public ResponseEntity<T> forbidden(final String message) {
         return new ResponseEntity<T>(StatusCode.FORBIDDEN.getStatusCode(), message);
     }
 
+    /**
+     * 请求参数出错，状态码：20107
+     * 
+     * @return
+     */
+    public ResponseEntity<T> badValidated() {
+        return forbidden(StatusCode.BAD_VALIDATED.getStatusMessage());
+    }
+
+    /**
+     * 请求参数出错，状态码：20107
+     * 
+     * @param message 提示消息
+     * @return
+     */
+    public ResponseEntity<T> badValidated(final String message) {
+        return new ResponseEntity<T>(StatusCode.BAD_VALIDATED.getStatusCode(), message);
+    }
+
+    /**
+     * 表示用户没有权限（令牌、用户名、密码错误），状态码：20401
+     * 
+     * @return
+     */
     public ResponseEntity<T> unauthorized() {
         return unauthorized(StatusCode.UNAUTHORIZED.getStatusMessage());
     }
 
+    /**
+     * 表示用户没有权限（令牌、用户名、密码错误），状态码：20401
+     * 
+     * @param message 提示消息
+     * @return
+     */
     public ResponseEntity<T> unauthorized(final String message) {
         return new ResponseEntity<T>(StatusCode.UNAUTHORIZED.getStatusCode(), message);
     }
 
-
-    public ResponseEntity<T> serviceUnavailable() {
-        return serviceUnavailable(StatusCode.SERVICE_UNAVAILABLE.getStatusMessage());
-    }
-
-    public ResponseEntity<T> serviceUnavailable(final String message) {
-        return new ResponseEntity<T>(StatusCode.SERVICE_UNAVAILABLE.getStatusCode(), message);
-    }
 
 
     /**
@@ -222,9 +309,9 @@ public class ResponseEntity<T> {
      *
      * @return 刷新后的 <code>this</code>
      */
-    @SuppressWarnings("unchecked")
     public ResponseEntity<T> filterFieldsFlush() {
-        return JsonUtils.jsonToType(this.toJson(), this.getClass());
+        return JsonUtils.jsonToType(this.toJson(), new TypeReference<ResponseEntity<T>>() {});
+        // return JsonUtils.jsonToType(this.toJson(), this.getClass());
     }
 
     /**
@@ -247,7 +334,8 @@ public class ResponseEntity<T> {
      */
     @JsonIgnore
     public boolean isOk() {
-        return StatusCode.OK.getStatusCode().equals(this.getStatusCode());
+        return this.getStatusCode() != null
+                && StatusCode.OK.getStatusCode().equals(this.getStatusCode());
     }
 
     /**
@@ -282,31 +370,93 @@ public class ResponseEntity<T> {
     }
 
 
+    /**
+     * 获取返回对象
+     * 
+     * @return
+     */
+    public T getResponseContent() {
+        return responseContent;
+    }
+
+    /**
+     * 设置返回对象
+     * 
+     * @param responseContent
+     * @return
+     */
+    public ResponseEntity<T> setResponseContent(T responseContent) {
+        this.responseContent = responseContent;
+        return this;
+    }
+
+    /**
+     * 获取导出标题列
+     * 
+     * @return
+     */
+    public LinkedHashMap<String, String> getExportTitleMap() {
+        return exportTitleMap;
+    }
+
+    /**
+     * 设置导出标题列
+     * 
+     * @param exportTitleMap
+     * @return
+     */
+    public ResponseEntity<T> setExportTitleMap(LinkedHashMap<String, String> exportTitleMap) {
+        this.exportTitleMap = exportTitleMap;
+        return this;
+    }
+
+    /**
+     * 获取状态码
+     * 
+     * @return
+     */
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * 获取状态信息
+     * 
+     * @return
+     */
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    /**
+     * 获取过滤字段
+     * 
+     * @return
+     */
+    public String getFilterFields() {
+        return filterFields;
+    }
+
+    /**
+     * 业务状态码
+     * 
+     * @author zhaoyc
+     * @version 创建时间：2018年1月12日 下午3:20:43
+     */
     public enum StatusCode {
-        /** [GET]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）。 **/
-        OK("200", "请求成功"),
-        /** [POST/PUT/PATCH]：用户新建或修改数据成功。 **/
-        CREATED("201", "操作成功"),
-        /** 202 Accepted - [*]：表示一个请求已经进入后台排队（异步任务） **/
-        OK_NOT_HANDLER("202", "收到请求"),
-        /** 204 NO CONTENT - [DELETE]：用户删除数据成功。 **/
-        NO_CONTENT("204", "数据删除成功"),
-        /** 400 INVALID REQUEST - [POST/PUT/PATCH]：用户发出的请求有错误，服务器没有进行新建或修改数据的操作，该操作是幂等的。 **/
-        BAD_REQUEST("400", "请求失败"),
-        /** 401 Unauthorized - [*]：表示用户没有权限（令牌、用户名、密码错误）。 **/
-        UNAUTHORIZED("401", "身份验证失败"),
-        /** 403 Forbidden - [*] 表示用户得到授权（与401错误相对），但是访问是被禁止的。 **/
-        FORBIDDEN("403", "权限不足"),
-        /** 404 NOT FOUND - [*]：用户发出的请求针对的是不存在的记录，服务器没有进行操作，该操作是幂等的。 **/
-        NOT_FOUND("404", "记录不存在"), METHOD_NOT_ALLOWED("405", "目标资源不支持该请求方式"),
-        /** 406 Not Acceptable - [GET]：用户请求的格式不可得（比如用户请求JSON格式，但是只有XML格式）。 **/
-        NOT_ACCEPTABLE("404", "请求格式错误"), REQUEST_TIME_OUT("408", "服务器等待客户端发送的请求时间过长,超时"),
-        /** 410 Gone -[GET]：用户请求的资源被永久删除，且不会再得到的。 **/
-        GONE("410", "请求的资源被永久删除"),
-        /** 422 请求格式正确，但是由于含有语义错误，无法响应 **/
-        UNPROCESSABLE_ENTITY("422", "验证失败"), TOO_MANY_REQUESTS("429", "太多的请求"), TRADE_REPETITION("460", "重复交易"),
-        /** 500 INTERNAL SERVER INTERNAL_SERVER_ERROR - [*]：服务器发生错误，用户将无法判断发出的请求是否成功。 **/
-        INTERNAL_SERVER_ERROR("500", "请求出错"), SERVICE_UNAVAILABLE("503", "由于临时的服务器维护或者过载,服务器当前无法处理请求");
+        /** 请求成功 **/
+        OK("20000", "请求成功"),
+        /** 请求参数出错 **/
+        BAD_VALIDATED("20107", "请求参数出错"),
+        /** 请求失败 **/
+        BAD_REQUEST("20400", "请求失败"),
+        /** 身份验证失败 **/
+        UNAUTHORIZED("20401", "身份验证失败"),
+        /** 权限不足 **/
+        FORBIDDEN("20403", "权限不足"),
+
+        /** 系统内部错误 **/
+        SYSTEM_ERROR("20500", "系统内部错误");
 
         private final String statusCode;
         private final String statusMessage;
@@ -326,5 +476,126 @@ public class ResponseEntity<T> {
 
     }
 
+    /**
+     * 第三方API调用的状态码
+     * 
+     * @author zhaoyc
+     * @version 创建时间：2018年1月17日 下午4:19:06
+     */
+    public enum ApiStatusCode {
+        /** 请求成功 **/
+        OK("20000", "请求成功"),
+        /** appId缺失 **/
+        APPID_NOT_FOUND("20101", "appId缺失"),
+        /** appSecret缺失 **/
+        APPSECRET_NOT_FOUND("20102", "appSecret缺失"),
+        /** accessToken缺失 **/
+        ACCESSTOKEN_NOT_FOUND("20103", "accessToken缺失"),
+        /** accessToken超时或无效 **/
+        ACCESSTOKEN_EXPIRE("20104", "accessToken超时或无效"),
+        /** 请求uri为空 **/
+        URI_IS_EMPTY("20105", "请求uri为空"),
+        /** 请求API地址出错 **/
+        URI_ERROR("20106", "请求API地址出错"),
+        /** 请求参数出错 **/
+        BAD_VALIDATED("20107", "请求参数出错"),
+
+        /** 无此用户，或用户授权已被禁用 **/
+        TENANT_NOT_FOUND("20201", "无此用户，或用户授权已被禁用"),
+        /** appId错误，授权或已经被删除 **/
+        APPID_ERROR("20202", "appId错误，授权或已经被删除"),
+        /** appSecret错误，请检查appSecret是否拼写错误 **/
+        APPSECRET_ERROR("20203", "appSecret错误，请检查appSecret是否拼写错误"),
+        /** 越权访问 **/
+        EXCEEDS_AUTHORIZED_ACCESS("20204", "越权访问"),
+        /** 无权访问 **/
+        NO_AUTHORIZED_ACCESS("20205", "无权访问"),
+        /** 无访问资源 **/
+        RESOURCES_NOT_FOUND("20206", "无访问资源"),
+        /** 非法来源 **/
+        WHITELIST_NOT_FOUND("20207", "非法来源"),
+
+        /** 系统内部错误 **/
+        SYSTEM_ERROR("20500", "系统内部错误");
+
+        private final String statusCode;
+        private final String statusMessage;
+
+        ApiStatusCode(String statusCode, String statusMessage) {
+            this.statusCode = statusCode;
+            this.statusMessage = statusMessage;
+        }
+
+        public String getStatusMessage() {
+            return statusMessage;
+        }
+
+        public String getStatusCode() {
+            return statusCode;
+        }
+
+    }
+
+
+
+    /**
+     * 第三方sso无秘登陆的状态码
+     * 
+     * @author zhaoyc
+     * @version 创建时间：2018年1月17日 下午4:19:06
+     */
+    public enum SsoStatusCode {
+        /** 请求成功 **/
+        OK("20000", "请求成功"),
+        /** username缺失 **/
+        USERNAME_NOT_FOUND("20101", "username缺失"),
+        /** secretString缺失 **/
+        SECRETSTRING_NOT_FOUND("20102", "secretString缺失"),
+        /** secretKey缺失 **/
+        SECRETKEY_NOT_FOUND("20102", "secretKey缺失"),
+        /** secretKey错误 **/
+        SECRETKEY_ERROR("20102", "secretKey错误"),
+        /** secretString格式错误 **/
+        SECRETSTRING_FORMAT_ERROR("20103", "secretString格式错误"),
+        /** 时间戳格式错误 **/
+        TIMESTRING_FORMAT_ERROR("20104", "时间戳格式错误"),
+        /** 加密串超时 **/
+        SECRETSTRING_EXPIRE("20105", "加密串超时"),
+        /** 用户名和加密串不一致 **/
+        USERNAME_DIFFER("20106", "用户名和加密串不一致"),
+        /** 请求参数出错 **/
+        BAD_VALIDATED("20107", "请求参数出错"),
+
+        /** 用户名错误 **/
+        USERNAME_ERROR("20201", "用户名错误"),
+        /** 该用户已被删除 **/
+        USER_DELETE("20202", "该用户已被删除"),
+        /** 该用户已被禁用 **/
+        USER_DISABLE("20203", "该用户已被禁用"),
+        /** SSO登陆未得到授权 **/
+        TENANT_NOT_FOUND("20204", "SSO登陆未得到授权"),
+        /** 非法来源 **/
+        WHITELIST_NOT_FOUND("20205", "非法来源，不在白名单内"),
+
+        /** 系统内部错误 **/
+        SYSTEM_ERROR("20500", "系统内部错误");
+
+        private final String statusCode;
+        private final String statusMessage;
+
+        SsoStatusCode(String statusCode, String statusMessage) {
+            this.statusCode = statusCode;
+            this.statusMessage = statusMessage;
+        }
+
+        public String getStatusMessage() {
+            return statusMessage;
+        }
+
+        public String getStatusCode() {
+            return statusCode;
+        }
+
+    }
 
 }

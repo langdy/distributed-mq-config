@@ -6,7 +6,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
@@ -14,13 +16,21 @@ import org.apache.logging.log4j.LogManager;
 import org.reflections.ReflectionUtils;
 import com.google.common.collect.Maps;
 import com.yjl.distributed.mq.config.common.annotation.ExportFiledComment;
+import javassist.ClassClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.NotFoundException;
+import javassist.bytecode.CodeAttribute;
+import javassist.bytecode.LocalVariableAttribute;
+import javassist.bytecode.MethodInfo;
 
 /**
  * 反射工具
  *
- * @author : zhaoyc
- * @date : 2017/7/26
  * @see "https://github.com/ronmamo/reflections"
+ * @author zhaoyc
+ * @version 创建时间：2017年11月27日 上午11:08:28
  */
 public final class ReflectionPlusUtils extends ReflectionUtils {
 
@@ -159,6 +169,35 @@ public final class ReflectionPlusUtils extends ReflectionUtils {
      */
     private static String buildGetters(String fieldName) {
         return GETTERS_PREFIX + StringPrivateUtils.firstCharToUpperCase(fieldName);
+    }
+
+    /**
+     * 得到方法参数的名称
+     */
+    public static Map<String, Integer> getMethodParamList(Class<?> cls, String clazzName,
+            String methodName) throws NotFoundException {
+        Map<String, Integer> resultMap = new HashMap<>();
+        ClassPool pool = ClassPool.getDefault();
+        ClassClassPath classPath = new ClassClassPath(cls);
+        pool.insertClassPath(classPath);
+
+        CtClass cc = pool.get(clazzName);
+        CtMethod cm = cc.getDeclaredMethod(methodName);
+        MethodInfo methodInfo = cm.getMethodInfo();
+        CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+        LocalVariableAttribute attr =
+                (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
+        if (attr == null) {
+            return resultMap;
+        }
+        String[] paramNames = new String[cm.getParameterTypes().length];
+        int pos = javassist.Modifier.isStatic(cm.getModifiers()) ? 0 : 1;
+        for (int i = 0; i < paramNames.length; i++) {
+            // paramNames即参数名
+            String paramName = attr.variableName(i + pos);
+            resultMap.put(paramName, i + 1);
+        }
+        return resultMap;
     }
 
 

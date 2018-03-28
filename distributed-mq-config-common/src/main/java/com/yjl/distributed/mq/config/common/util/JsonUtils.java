@@ -9,8 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.bohnman.squiggly.Squiggly;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 /**
  * json工具类
@@ -29,14 +27,6 @@ public class JsonUtils {
      */
     private static final ObjectMapper BASIC = new ObjectMapper();
     private static final ObjectMapper CUSTOMIZATION = new CustomizationObjectMapper();
-    /**
-     * <p>
-     * gson
-     * </p>
-     * <a href="https://github.com/google/gson/blob/master/UserGuide.md">document</a>
-     */
-    private static final Gson GSON = new GsonBuilder()
-            .setDateFormat(DateFormatStyleEnum.CN_DATE_BASIC_STYLE.getDateStyle()).create();
     /**
      * <p>
      * fastjson
@@ -214,9 +204,6 @@ public class JsonUtils {
         return BASIC;
     }
 
-    public static Gson getGson() {
-        return GSON;
-    }
 
     public static JSON getFastjson() {
         return JSON;
@@ -270,7 +257,8 @@ public class JsonUtils {
             super();
             setDateFormat(
                     new SimpleDateFormat(DateFormatStyleEnum.CN_DATE_BASIC_STYLE.getDateStyle()));
-            setSerializationInclusion(JsonInclude.Include.NON_NULL); // <code>null<code> 不序列化
+            // <code>null<code> 不序列化
+            setSerializationInclusion(JsonInclude.Include.NON_NULL);
         }
     }
 

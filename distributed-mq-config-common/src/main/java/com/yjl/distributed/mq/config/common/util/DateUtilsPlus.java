@@ -62,6 +62,24 @@ public class DateUtilsPlus extends DateUtils {
     }
 
     /**
+     * 根据指定格式格式化日期
+     * 
+     * @author WuJianYing
+     * @since 2018年2月8日
+     * @param date
+     * @param dateStyle
+     * @return
+     */
+    public static Date formatDate(final Date date, final String dateStyle) {
+        DateFormat format = new SimpleDateFormat(dateStyle);
+        try {
+            return format.parse(format.format(date));
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    /**
      * {@link #formatDateByStyle(Date , String)} 默认格式格式 :
      * {@link DateFormatStyle#CN_DATE_BASIC_STYLE}
      */
@@ -108,7 +126,7 @@ public class DateUtilsPlus extends DateUtils {
      * 得天数间隔时间
      * 
      * <pre>
-     * DateUtil.getMinuteInterval(  2016-5-4 15:56:30 ,2017-5-4 15:56:30  ) = 365
+     * DateUtil.getDayInterval(  2016-5-4 15:56:30 ,2017-5-4 15:56:30  ) = 365
      * </pre>
      *
      * @param a : Date 类型,不分前后顺序
@@ -117,6 +135,20 @@ public class DateUtilsPlus extends DateUtils {
      */
     public static long getDayInterval(Date a, Date b) {
         return Math.abs((a.getTime() - b.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+
+
+    /**
+     * 日期之间的小时数间隔
+     * 
+     *
+     * @param a : Date 类型,不分前后顺序
+     * @param b : Date 类型,不分前后顺序
+     * @return 日期之间的小时数间隔
+     */
+    public static long getHourInterval(Date a, Date b) {
+        return Math.abs((a.getTime() - b.getTime()) / (1000 * 60 * 60));
     }
 
     /**

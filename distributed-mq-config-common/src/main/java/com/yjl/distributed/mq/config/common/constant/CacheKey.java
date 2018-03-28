@@ -8,6 +8,6 @@ package com.yjl.distributed.mq.config.common.constant;
  * 
  */
 public interface CacheKey {
-    String KEY_TOKEN = "token_"; // string,用户鉴权token
+    String KEY_TOKEN = "token:"; // string,用户鉴权token
 
 }

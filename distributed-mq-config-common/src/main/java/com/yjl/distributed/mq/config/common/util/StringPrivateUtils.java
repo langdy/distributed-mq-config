@@ -16,20 +16,27 @@ import org.apache.commons.lang3.StringUtils;
 
 
 /**
- * @author : zhaoyc
- * @date : 2017/7/26
+ * @author zhaoyc
+ * @version 创建时间：2017年11月27日 上午11:07:44
  */
+@SuppressWarnings("all")
 public final class StringPrivateUtils {
+
     public final static String SPRIT = "/";
-    /* V_2V */
+    /**
+     * V_2V
+     */
     static boolean separatorBeforeDigit = false;
-    /* V2_V */
-    static boolean separatorAfterDigit = true; // false might not work totally fine e.g.
-                                               // ToHyphenCaseActionTest
+    /**
+     * V2_V
+     */
+    static boolean separatorAfterDigit = true;
+    // false might not work totally fine e.g.
+    // ToHyphenCaseActionTest
 
 
     /**
-     * {@link ObjectUtils#defaultIfNull(Object , Object)}
+     * {@link ObjectUtils#defaultIfNull(Object, Object)}
      */
     public static String getString(Object object) {
         return ObjectUtils.defaultIfNull(object, StringUtils.EMPTY).toString();
@@ -43,7 +50,6 @@ public final class StringPrivateUtils {
      * </p>
      *
      * @param rawString 需要处理的字符串
-     * @return
      */
     public static String firstCharToLower(String rawString) {
         return prefixToLower(rawString, 1);
@@ -57,7 +63,6 @@ public final class StringPrivateUtils {
      * </p>
      *
      * @param rawString 需要处理的字符串
-     * @return
      */
     public static String firstCharToUpperCase(String rawString) {
         return prefixToUpperCase(rawString, 1);
@@ -70,7 +75,6 @@ public final class StringPrivateUtils {
      *
      * @param rawString 需要处理的字符串
      * @param index 多少个字符(从左至右)
-     * @return
      */
     public static String prefixToUpperCase(String rawString, int index) {
         String beforeChar = StringUtils.substring(rawString, 0, index).toUpperCase();
@@ -85,7 +89,6 @@ public final class StringPrivateUtils {
      *
      * @param rawString 需要处理的字符串
      * @param index 多少个字符(从左至右)
-     * @return
      */
     public static String prefixToLower(String rawString, int index) {
         String beforeChar = StringUtils.substring(rawString, 0, index).toLowerCase();
@@ -102,7 +105,6 @@ public final class StringPrivateUtils {
      *
      * @param rawString 需要处理的字符串
      * @param index 删除多少个字符(从左至右)
-     * @return
      */
     public static String removePrefixAfterPrefixToLower(String rawString, int index) {
         return prefixToLower(StringUtils.substring(rawString, index, rawString.length()), 1);
@@ -113,7 +115,6 @@ public final class StringPrivateUtils {
      * 驼峰转连字符<br>
      * </p>
      *
-     * @param input
      * @return 以'-'分隔
      */
     public static String camelToHyphen(String input) {
@@ -167,7 +168,6 @@ public final class StringPrivateUtils {
             buf.append("_");
         }
 
-
         return buf.toString();
 
     }
@@ -193,16 +193,16 @@ public final class StringPrivateUtils {
             // ORIGINAL if (lastOneIsNotUnderscore && (isUpperCase(c) ||
             // isLowerCaseAndPreviousIsWhitespace)) {
 
-
             // camelCase handling - add extra _
             if (lastOneIsNotUnderscore && (isUpperCaseAndPreviousIsLowerCase || previousIsWhitespace
                     || (betweenUpperCases && containsLowerCase
                             && isUpperCaseAndPreviousIsUpperCase))) {
                 buf.append("_");
             } else if ((separatorAfterDigit && isDigit(previousChar) && isLetter(c))
-                    || (separatorBeforeDigit && isDigit(c) && isLetter(previousChar))) { // extra _
-                                                                                         // after
-                                                                                         // number
+                    || (separatorBeforeDigit && isDigit(c) && isLetter(previousChar))) {
+                // extra _
+                // after
+                // number
                 buf.append('_');
             }
 
@@ -218,7 +218,6 @@ public final class StringPrivateUtils {
         if (isWhitespace(previousChar)) {
             buf.append("_");
         }
-
 
         return buf.toString();
     }
@@ -263,7 +262,6 @@ public final class StringPrivateUtils {
             buf.append(".");
         }
 
-
         return buf.toString();
     }
 
@@ -280,7 +278,7 @@ public final class StringPrivateUtils {
      * has just one element, namely the input sequence in string form.
      * <p/>
      * <p/>
-     * 
+     *
      * <pre>
      * splitPreserveAllTokens("boo:and:foo", ":") =  { "boo", ":", "and", ":", "foo"}
      * splitPreserveAllTokens("boo:and:foo", "o") =  { "b", "o", "o", ":and:f", "o", "o"}
@@ -311,7 +309,6 @@ public final class StringPrivateUtils {
         if (index == 0) {
             return new String[] {input};
         }
-
 
         final String remaining = input.subSequence(index, input.length()).toString();
         if (StringUtils.isNotEmpty(remaining)) {

@@ -7,7 +7,7 @@ import org.springframework.validation.ObjectError;
 
 /**
  * 
- * @author zhaoyc@1109
+ * @author zhaoyc
  * @version 创建时间：2017年10月18日 上午11:46:56
  */
 public class ValidatedUtils {

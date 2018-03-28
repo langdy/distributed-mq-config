@@ -1,9 +1,11 @@
 package com.yjl.distributed.mq.config.common.util;
 
-import com.yjl.distributed.mq.config.common.exception.CaptchaException;
+import java.math.BigDecimal;
+import java.util.Date;
+import javax.validation.ValidationException;
+import org.apache.commons.lang3.StringUtils;
+import com.yjl.distributed.mq.config.common.constant.BaseConstant;
 import com.yjl.distributed.mq.config.common.exception.DaoException;
-import com.yjl.distributed.mq.config.common.exception.ForbiddenException;
-import com.yjl.distributed.mq.config.common.exception.ResourceNotFoundException;
 import com.yjl.distributed.mq.config.common.exception.ServiceException;
 
 /**
@@ -14,58 +16,32 @@ import com.yjl.distributed.mq.config.common.exception.ServiceException;
  */
 public class AssertUtils {
 
-
-    /**
-     * 如果条件为<code>true</code> throw {@link ResourceNotFoundException}
-     *
-     * @param condition : 断言条件
-     * @param message : 错误信息
-     * @throws ResourceNotFoundException
-     */
-    public static void assertResourceNotFoundIsTrue(boolean condition, String message) {
-        if (condition) {
-            throw new ResourceNotFoundException(message);
-        }
-
-    }
-
-
-    /**
-     * 如果条件为<code>true</code> throw {@link CaptchaException}
-     *
-     * @param condition : 断言条件
-     * @param message : 错误信息
-     * @throws CaptchaException
-     */
-    public static void assertCaptchaIsTrue(boolean condition, String message) {
-        if (condition) {
-            throw new CaptchaException(message);
-        }
-    }
-
-    /**
-     * 如果条件为<code>true</code> throw {@link ForbiddenException}
-     *
-     * @param condition : 断言条件
-     * @param message : 错误信息
-     * @throws ForbiddenException
-     */
-    public static void assertPermissionIsTrue(boolean condition, String message)
-            throws ForbiddenException {
-        if (condition) {
-            throw new ForbiddenException(message);
-        }
-    }
-
     /**
      * service 层断言
      *
      * @param condition : 断言条件
      * @param message : 错误信息
-     * @throws ServiceException
+     * @throws ServiceException 如果条件为true,则会抛Service异常(在GlobalResponseControllerAdvice中会有统一异常处理)
      */
     public static void isTrue(boolean condition, String message) {
-        assertServiceException(condition, message);
+        if (condition) {
+            throw new ServiceException(message);
+        }
+    }
+
+
+    /**
+     * valid（参数校验） 断言
+     *
+     * @param condition : 断言条件
+     * @param message : 错误信息
+     * @throws ValidationException
+     *         如果条件为true,则会抛Validation异常(在GlobalResponseControllerAdvice中会有统一异常处理)
+     */
+    public static void validIsTrue(boolean condition, String message) {
+        if (condition) {
+            throw new ValidationException(message);
+        }
     }
 
 
@@ -74,37 +50,78 @@ public class AssertUtils {
      *
      * @param condition : 断言条件
      * @param message : 错误信息
-     * @throws DaoException
+     * @throws DaoException 如果条件为true,则会抛Dao异常(在GlobalResponseControllerAdvice中会有统一异常处理)
      */
-    public static void assertDaoIsTrue(boolean condition, String message) {
-        daoServiceException(condition, message);
-    }
-
-    /**
-     * 断言
-     *
-     * @param condition : 断言条件
-     * @param message : 错误信息
-     * @throws DaoException 如果条件为<code>true</code>,则会抛Service异常(异常为运行时异常,在Spring中会有统一异常处理)
-     */
-    private static void assertServiceException(boolean condition, String message) {
-        if (condition) {
-            throw new ServiceException(message);
-        }
-    }
-
-    /**
-     * 断言
-     *
-     * @param condition : 断言条件
-     * @param message : 错误信息
-     * @throws DaoException 如果条件为<code>true</code>,则会抛Dao异常(异常为运行时异常,在Spring中会有统一异常处理)
-     */
-    private static void daoServiceException(boolean condition, String message) {
+    public static void daoIsTrue(boolean condition, String message) {
         if (condition) {
             throw new DaoException(message);
         }
     }
 
+    /**
+     * 断言: value为空字符串
+     *
+     * @param str 需要校验的字符串
+     * @param message 错误信息
+     */
+    public static void assertEmpty(String str, String message) {
+        AssertUtils.validIsTrue(StringUtils.isEmpty(str), message);
+    }
+
+    /**
+     * 断言 : 传入的ID 为空或等于0
+     *
+     * @param id ID
+     * @param message 错误信息
+     */
+    public static void assertWrongId(Long id, String message) {
+        AssertUtils.validIsTrue(id == null || id.compareTo(BaseConstant.ROOT_ID) == 0, message);
+    }
+
+    /**
+     * 断言:对象为空
+     *
+     * @param obj obj
+     * @param message 错误信息
+     */
+    public static void assertNull(Object obj, String message) {
+        AssertUtils.validIsTrue(obj == null, message);
+    }
+
+    /**
+     * 断言:两个日期(一个起始日期, 一个截止日期) 之间不存在间隙 或 其实日期 > 截止日期
+     *
+     * @param beforeDate 起始日期
+     * @param afterDate 截止日期
+     * @param message 错误信息
+     */
+    public static void validateDateOffset(Date beforeDate, Date afterDate, String message) {
+
+        AssertUtils.validIsTrue(beforeDate == null || afterDate == null, message);
+        AssertUtils.validIsTrue(beforeDate.compareTo(afterDate) >= 0, message);
+
+    }
+
+    /**
+     * 断言:传入的Decimal不是正数
+     *
+     * @param bigDecimal decimal
+     * @param message 字段名
+     */
+    public static void assertNotPositiveNumber(BigDecimal bigDecimal, String message) {
+        assertNull(bigDecimal, message);
+        AssertUtils.validIsTrue(bigDecimal.compareTo(BigDecimal.ZERO) <= 0, message);
+    }
+
+    /**
+     * 断言: 传入的Integer不是正数
+     *
+     * @param integer integer
+     * @param message 错误信息
+     */
+    public static void assertNotPositiveNumber(Integer integer, String message) {
+        assertNull(integer, message);
+        AssertUtils.validIsTrue(integer <= 0, message);
+    }
 
 }

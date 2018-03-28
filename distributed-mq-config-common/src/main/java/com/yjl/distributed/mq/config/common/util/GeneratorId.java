@@ -1,7 +1,3 @@
-/*
- * 文 件 名: GenerationCode.java 版 权: HNA TELECOM Co.,LTD. 描 述: 生成编码规则 创 建 人: wubangjie 创建时间:
- * 2016年6月27日
- */
 package com.yjl.distributed.mq.config.common.util;
 
 import java.lang.management.ManagementFactory;
@@ -9,30 +5,44 @@ import java.net.NetworkInterface;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
-import java.util.concurrent.atomic.LongAdder;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
- * 分布式code构建工具
+ * <p>
+ * 全局唯一ID生成器，31位：17位毫秒时间戳（格式化后）+9位机器码和进程号+5位循环序列号
+ * </p>
+ * <p>
+ * 全局唯一ID生成器，27位：13位毫秒数时间戳（无格式化）+9位机器码和进程号+5位循环序列号
+ * </p>
  * 
+ * @author zhaoyc
+ * @version 创建时间：2018年1月17日 下午1:39:53
  */
-public final class GenerationCode {
+public class GeneratorId {
 
 
+    public static void main(String[] args) {
 
+        long a = System.currentTimeMillis();
+        for (int i = 0; i < 2000000; i++) {
+            nextFormatId();
+            // System.out.println(nextFormatId());
+        }
+        System.out.println(System.currentTimeMillis() - a);
+
+        System.out.println(nextFormatId());
+
+    }
+
+    /** 流水号起始值 */
+    private static final long MIN_SEQUENCE = 10000L;
+    /** 流水号最大值 */
+    private static final long MAX_SEQUENCE = 99999L;
+    /** 流水号，在最小最大值之间循环，避免唯一ID的安全性泄露，时间戳精确到毫秒，单机在1毫秒内也不可能生成近十万个业务ID */
+    private static long sequence = MIN_SEQUENCE;
     /** 机器码 加 进程号 会导致生成的序列号很长, 基于这两个值做一些截取 */
     private static final String MP;
-    /** 截取长度: 从最后面开始截取 */
-    private static final int MP_LEN = 6;
-    /** 日期格式化,是线程安全的 */
-    private static final DateTimeFormatter DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-    /** 原子类 */
-    private static final LongAdder LONG_ADDER = new LongAdder();
-
 
     static {
         try {
@@ -46,37 +56,51 @@ public final class GenerationCode {
             } else {
                 mp = Integer.toString(Integer.MIN_VALUE);
             }
-
-            MP = (mp.length() > MP_LEN) ? mp.substring(mp.length() - MP_LEN, mp.length()) : mp;
+            MP = mp;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    private GeneratorId() {};
+
     /**
-     * (机器码 + 进程号) + 随机数 + 时间 + 下一个数
-     *
-     * @return 全局唯一ID
+     * 全局唯一ID生成器，31位：17位毫秒时间戳（格式化后）+9位机器码和进程号+5位循环序列号
+     * 
+     * @return
      */
-    public static String globalUniqueId() {
-        LONG_ADDER.increment();
-        final String randomNumber = RandomStringUtils.randomNumeric(10); // 随机数,该工具类是线程安全的
-        final String now = DATE_TIME_FORMATTER.format(LocalDateTime.now()); // 时间
-        final long nextNumber = LONG_ADDER.longValue(); // 下一个数
-        return MP + Thread.currentThread().getId() + randomNumber + now + nextNumber;
+    public static synchronized String nextFormatId() {
+        return DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMddHHmmssSSS") + MP
+                + nextSequence();
     }
 
     /**
-     * (机器码 + 进程号) + 随机数 + 时间 + 下一个数 + 用户ID
-     *
-     * @param userId : 用户ID
-     * @return 全局唯一ID
+     * 全局唯一ID生成器，27位：13位毫秒数时间戳（无格式化）+9位机器码和进程号+5位循环序列号
+     * 
+     * @return
      */
-    public static String globalUniqueId(final String userId) {
-        return globalUniqueId() + userId;
+    public static synchronized String nextMillisId() {
+        return System.currentTimeMillis() + MP + nextSequence();
     }
 
-    // 创建机器标识符
+    /**
+     * 生成下一个序列号
+     * 
+     * @return
+     */
+    private static synchronized long nextSequence() {
+        if (sequence >= MAX_SEQUENCE) {
+            sequence = MIN_SEQUENCE;
+        }
+        ++sequence;
+        return sequence;
+    }
+
+    /**
+     * 获取机器标识符
+     * 
+     * @return
+     */
     private static int createMachineIdentifier() {
         // build a 2-byte machine piece based on NICs info
         int machinePiece;
@@ -107,9 +131,12 @@ public final class GenerationCode {
         return machinePiece;
     }
 
-    // Creates the process identifier. This does not have to be unique per class loader because
-    // NEXT_COUNTER will provide the uniqueness.
-    // 创建进程标识符。这并不是每个类装入器,因为必须是唯一的
+
+    /**
+     * 获取JVM进程号，这并不是每个类装入器,因为必须是唯一的
+     * 
+     * @return
+     */
     private static int createProcessIdentifier() {
         int processId;
         try {
@@ -125,7 +152,4 @@ public final class GenerationCode {
         return processId;
     }
 
-
 }
-
-
