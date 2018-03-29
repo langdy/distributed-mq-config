@@ -50,7 +50,7 @@ spring:
 # 分页 page helper
 pagehelper:
     helperDialect: Mysql
-    reasonable: true
+    reasonable: false
     supportMethodsArguments: true
     params: count=countSql
     
